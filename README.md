@@ -299,28 +299,20 @@ The writer inserts into table `processed_transactions` with columns:
 - product_name (text/varchar)
 - quantity (int)
 - base_price (numeric)
-- discount_applied (numeric)
 - final_price (numeric)
 
 Suggested DDL:
 
 ```sql
-CREATE TABLE IF NOT EXISTS processed_transactions (
-    id BIGSERIAL PRIMARY KEY,
+CREATE TABLE processed_transactions (
+    id SERIAL PRIMARY KEY,
     transaction_timestamp TIMESTAMP NOT NULL,
-    product_name TEXT NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
     quantity INT NOT NULL,
-    base_price NUMERIC(14,2) NOT NULL,
-    discount_applied NUMERIC(8,4) NOT NULL,
-    final_price NUMERIC(14,2) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    base_price NUMERIC(10, 2) NOT NULL,
+    discount_applied NUMERIC(5, 4) NOT NULL,
+    final_price NUMERIC(10, 2) NOT NULL
 );
-
-CREATE INDEX IF NOT EXISTS idx_processed_transactions_timestamp
-    ON processed_transactions (transaction_timestamp);
-
-CREATE INDEX IF NOT EXISTS idx_processed_transactions_product_name
-    ON processed_transactions (product_name);
 ```
 
 ## Configuration
@@ -392,7 +384,7 @@ Interpretation:
 5. Partial writes are possible when failure occurs after one or more chunk commits.
 6. No test suite currently committed.
 
-## Recommended Next Improvements
+## Next Improvements
 
 1. Add validation and dead-letter capture for malformed CSV rows.
 2. Add discount caps (for example total <= 0.90) and non-negative final price guard.
@@ -401,25 +393,6 @@ Interpretation:
 5. Add integration tests with a temporary PostgreSQL instance.
 6. Externalize rule configuration to file/database for runtime rule management.
 
-## Testing Strategy Blueprint
-
-Unit tests:
-
-- Rule-specific tests per factory/custom rule.
-- Engine top-two averaging behavior.
-- Boundary tests around quantity/date/expiry.
-
-Integration tests:
-
-- CSV -> DB happy path with small dataset.
-- Large batch progression and chunk commits.
-- Failure injection for DB errors and parse anomalies.
-
-Property tests:
-
-- `finalPrice >= 0` invariant (after discount cap is introduced).
-- Deterministic output for same input and rule set.
-
 ## Security And Operational Notes
 
 1. Never hardcode production credentials.
@@ -427,7 +400,7 @@ Property tests:
 3. Monitor DB write latency and lock/contention with large batches.
 4. Validate timezone assumptions from source timestamps.
 
-## Why This Design Is Professional And Scalable
+## Why This Design Is Scalable
 
 - Clear boundary between pure business logic and side effects.
 - Strong composability with function-based rules.
@@ -437,4 +410,6 @@ Property tests:
 
 ## License
 
-No license file is currently present in this repository.
+This project is licensed under the MIT License.
+
+See the LICENSE file for details.
