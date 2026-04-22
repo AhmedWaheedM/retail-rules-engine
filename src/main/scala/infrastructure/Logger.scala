@@ -16,6 +16,7 @@ object Logger {
     val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     def log(level: LogLevel, message: String): Try[Unit] = {
         val logM = s"${LocalDateTime.now().format(format)} $level $message"
+        // Append mode keeps historical logs across multiple runs.
         Using(new PrintWriter(new FileWriter(logFile, true))) { writer =>
             writer.println(logM)
         }

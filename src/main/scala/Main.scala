@@ -4,6 +4,7 @@ import scala.util.{Success, Failure}
 
 object Main extends App {
   
+  // Switch to TRX1000.csv for quick local smoke runs.
   val csvFilePath = "data\\TRX10M.csv" 
   
   Logger.log(Logger.INFO, "Starting the SCALED transaction processing pipeline.")
@@ -15,7 +16,8 @@ object Main extends App {
     DataWriter.writeResults(processedStream)
   }
 
- pipelineResult match {
+  // Outer Try handles file stage; inner Try captures database stage failures.
+  pipelineResult match {
   case Success(Success(totalSaved)) =>
     Logger.log(Logger.INFO, s"PIPELINE COMPLETED: Processed and saved $totalSaved transactions.")
     println(s"SUCCESS! Saved $totalSaved transactions. Check rules_engine.log")

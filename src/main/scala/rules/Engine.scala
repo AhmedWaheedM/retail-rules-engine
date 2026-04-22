@@ -6,6 +6,7 @@ object Engine {
     def processTransactions(transactions: Iterator[Transaction], rules: List[Transaction => Double]): Iterator[TransactionProcessed] = {
         transactions.map{
             t => 
+                // Use only the top two discounts to avoid unlimited stacking.
                 val averageDiscount = rules
                 .map(ruleFunc => ruleFunc(t))
                 .filter(_>0.0)
@@ -17,6 +18,7 @@ object Engine {
                 }
                 TransactionProcessed(
                     originalTransaction = t,
+                    // Keep all matched discounts for traceability/debugging.
                     discountApplied = rules.map(_(t)).filter(_>0.0),
                     averageDiscount = averageDiscount,
                     finalPrice = t.unitPrice * t.quantity * (1 - averageDiscount)

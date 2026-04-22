@@ -13,6 +13,7 @@ final case class Transaction(
     channel: String,
     paymentMethod: String
 ){
+    // Depends on current date at runtime, not the transaction timestamp.
     def daysToExpiry: Long = ChronoUnit.DAYS.between(LocalDate.now(), expiryDate)
 }
 

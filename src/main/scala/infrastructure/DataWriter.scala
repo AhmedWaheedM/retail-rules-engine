@@ -19,7 +19,7 @@ object DataWriter {
             val sql = "INSERT INTO processed_transactions (transaction_timestamp, product_name, quantity, base_price, discount_applied, final_price) VALUES (?, ?, ?, ?, ?, ?)"
             val stmt = use(conn.prepareStatement(sql))
 
-            // 1. The foldLeft block starts here
+            // Commit each chunk to balance throughput and failure recovery scope.
             val totalProcessed = results.grouped(10000).foldLeft(0) { (accumulatedTotal, chunk) =>
                 chunk.foreach { result => 
                     val transaction = result.originalTransaction
@@ -32,7 +32,6 @@ object DataWriter {
                     stmt.addBatch()
                 }
                 
-                // 2. These are now safely INSIDE the foldLeft block
                 stmt.executeBatch()
                 conn.commit()
                 

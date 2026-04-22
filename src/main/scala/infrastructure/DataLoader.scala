@@ -9,6 +9,7 @@ import scala.util.Using
 
 object DataLoader {
 
+  // Keep file lifetime scoped to processing so large inputs can be streamed safely.
   def loadTransactions[A](filePath: String)(process: Iterator[Transaction] => A): Try[A] = {
         Using(Source.fromFile(filePath)) { source =>
         val iterator = source.getLines().drop(1).flatMap(parseLine)
@@ -16,6 +17,7 @@ object DataLoader {
     }
   }
 
+  // Invalid rows are skipped by returning None, keeping ingestion resilient.
   def parseLine(line: String): Option[Transaction] = {
     val cols = line.split(",").map(_.trim)
     
