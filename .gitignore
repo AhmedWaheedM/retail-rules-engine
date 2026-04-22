@@ -1,0 +1,15 @@
+# Build and cache folders
+.bloop/
+.metals/
+project/project/
+project/target/
+target/
+src/target/
+
+# Log files and Data
+*.log
+data/
+
+# IDE specific files
+.vscode/
+.idea/
