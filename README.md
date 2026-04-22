@@ -298,6 +298,7 @@ The writer inserts into table `processed_transactions` with columns:
 - transaction_timestamp (timestamp)
 - product_name (text/varchar)
 - quantity (int)
+- discount_applied (numeric)
 - base_price (numeric)
 - final_price (numeric)
 
