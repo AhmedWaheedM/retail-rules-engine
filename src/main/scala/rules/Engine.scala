@@ -3,7 +3,7 @@ import  models.Transaction
 import models.TransactionProcessed
 
 object Engine { 
-    def processTransactions(transactions: List[Transaction], rules: List[Transaction => Double]): List[TransactionProcessed] = {
+    def processTransactions(transactions: Iterator[Transaction], rules: List[Transaction => Double]): Iterator[TransactionProcessed] = {
         transactions.map{
             t => 
                 val averageDiscount = rules

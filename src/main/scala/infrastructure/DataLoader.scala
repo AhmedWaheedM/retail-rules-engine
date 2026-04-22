@@ -9,9 +9,10 @@ import scala.util.Using
 
 object DataLoader {
 
-  def loadTransactions(filePath: String): Try[List[Transaction]] = {
+  def loadTransactions[A](filePath: String)(process: Iterator[Transaction] => A): Try[A] = {
         Using(Source.fromFile(filePath)) { source =>
-        source.getLines().drop(1).flatMap(parseLine).toList
+        val iterator = source.getLines().drop(1).flatMap(parseLine)
+        process(iterator)
     }
   }
 
